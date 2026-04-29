@@ -1,0 +1,2 @@
+2026-04-28 15:42:53,421 - pedimento.py - ERROR - Ocurrió un error: Object of type datetime is not JSON serializable
+2026-04-28 15:43:31,376 - pedimento.py - ERROR - Ocurrió un error: local variable 'cur' referenced before assignment
