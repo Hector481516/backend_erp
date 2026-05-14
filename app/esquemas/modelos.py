@@ -9,7 +9,7 @@ def get_all_modelos(filtros):
     try:
         query=f'''
             SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,
-	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id
+	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca
             FROM  catalogos_modelo mod
             INNER JOIN catalogos_modelodetalle det ON det.id_modelo_id=mod.id
             INNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_clasificacion_id
@@ -46,7 +46,7 @@ def actualiza_modelo(id_modelo: int, modelo):
             WHERE id = %s
             RETURNING *
         """
-        values = (modelo.nombre, modelo.modelo, modelo.clasificacion, modelo.marca, id_modelo)
+        values = (modelo.nombre, modelo.modelo, modelo.id_clasificacion, modelo.id_marca, id_modelo)
         resultado = ejecutar_commit(query, values)
         if resultado:
             query_detalle = """
@@ -55,10 +55,25 @@ def actualiza_modelo(id_modelo: int, modelo):
                 WHERE id_modelo_id = %s
                 RETURNING *
             """
-            values_detalle = (modelo.clave, modelo.color, id_modelo)
+            values_detalle = (modelo.clave, modelo.id_color, id_modelo)
             resultado_detalle = ejecutar_commit(query_detalle, values_detalle)
             if resultado_detalle:
                 return resultado_detalle
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
+def eliminar_modelo(id_modelo):
+    try:
+        query = """
+            UPDATE catalogos_modelo
+            SET id_estatus_id = 3
+            WHERE id = %s
+            RETURNING *
+        """
+        values = (id_modelo)
+        resultado = ejecutar_commit(query, values)
+        return resultado
     except Exception as e:
         print(f"An error occurred: {e}")
         crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')

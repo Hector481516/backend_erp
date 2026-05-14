@@ -82,3 +82,15 @@ LINE 5: ...NNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_cla...
 
 2026-05-14 14:03:35,343 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
 
+2026-05-14 16:36:02,119 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:36:02,119 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:36:02,119 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:36:25,750 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:36:25,750 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:36:25,750 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:37:22,083 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:37:22,083 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:37:22,083 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:38:28,684 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:38:28,684 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'
+2026-05-14 16:38:28,684 - marcas.py - ERROR - Ocurrió un error: 'ModeloCreate' object has no attribute 'clasificacion'

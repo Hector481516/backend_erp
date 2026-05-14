@@ -11,7 +11,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.utils.utils import crear_logg
 from app.esquemas.schemas import ModeloCreate
 from app.databases.database import ejecutar_insert
-from app.esquemas.modelos import get_all_modelos, consulta_clasificaciones, actualiza_modelo
+from app.esquemas.modelos import get_all_modelos, consulta_clasificaciones, actualiza_modelo, eliminar_modelo
 
 logger = logging.getLogger()
 nivel_debug=os.getenv("LOG_LEVEL")
@@ -69,8 +69,8 @@ def create_modelo(modelo: ModeloCreate):
         (
             modelo.nombre,
             modelo.modelo,
-            modelo.clasificacion,
-            modelo.marca,
+            modelo.id_clasificacion,
+            modelo.id_marca,
         )
     )
     if res:
@@ -84,7 +84,7 @@ def create_modelo(modelo: ModeloCreate):
             query,
             (
                 modelo.clave,
-                modelo.color,
+                modelo.id_color,
                 res['id']
             )
         )
@@ -93,5 +93,10 @@ def create_modelo(modelo: ModeloCreate):
     
 @app.patch('/actualiza_modelo/{id_modelo}')
 def update_modelo(id_modelo: int, modelo: ModeloCreate):
+    print(modelo)
     datos=actualiza_modelo(id_modelo, modelo)
+    return {'records': datos}
+@app.patch('/borrar_modelo/{id_modelo}')
+def delete_modelo(id_modelo):
+    datos=eliminar_modelo(id_modelo)
     return {'records': datos}

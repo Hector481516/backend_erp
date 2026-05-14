@@ -20,8 +20,8 @@ class MarcaUpdate(BaseModel):
 class ModeloCreate(BaseModel):
 
     nombre: str
-    modelo: str
-    clave: str
-    clasificacion: int
-    marca: int
-    color: int
+    modelo: int
+    clave: int
+    id_clasificacion: int
+    id_marca: int
+    id_color: int
