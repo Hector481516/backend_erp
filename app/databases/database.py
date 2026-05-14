@@ -2,6 +2,8 @@ import os
 import psycopg2
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+from decimal import Decimal
 
 ID_POSITION = 0
 CVE_POSITION = 1
@@ -64,18 +66,79 @@ def ejecutar_query_diccionario(query):
         conn.close()
     except psycopg2.InterfaceError as e:
         print(e)
+def ejecutar_insert(query, values):
+
+    try:
+        cur = conn.cursor()
+        cur.execute(query, values)
+        conn.commit()
+        result = cur.fetchone()
+        columns = [
+            desc[0]
+            for desc in cur.description
+        ]
+        return dict(
+            zip(columns, result)
+        )
+    except Exception as e:
+        conn.rollback()
+        print(e)
+        return None
+    finally:
+        if cur:
+            cur.close()
 def ejecutar_query(query):
     try:
         cur = conn.cursor()
         cur.execute(query)
         rows = cur.fetchall()
-        if len(rows)>0:
-            return rows
-        else:
-            return None
-    except ValueError:
-        print(ValueError)
+        columns = [
+            desc[0]
+            for desc in cur.description
+        ]
+        results = []
+        for row in rows:
+            row_dict = {}
+            for i, value in enumerate(row):
+                # datetime -> string
+                if isinstance(value, datetime):
+                    value = value.isoformat()
+                # Decimal -> float
+                elif isinstance(value, Decimal):
+                    value = float(value)
+                row_dict[columns[i]] = value
+            results.append(row_dict)
+        return results if results else None
+    except ValueError as e:
+        print(e)
         conn.close()
         return None
     except psycopg2.InterfaceError as e:
         print(e)
+        return None
+    
+def ejecutar_commit(query, values=None):
+    cur = None
+    try:
+        cur = conn.cursor()
+        cur.execute(query, values)
+        result = None
+        # Si la query tiene RETURNING
+        if cur.description:
+            row = cur.fetchone()
+            columns = [
+                desc[0]
+                for desc in cur.description
+            ]
+            result = dict(
+                zip(columns, row)
+            )
+        conn.commit()
+        return result
+    except Exception as e:
+        conn.rollback()
+        print(e)
+        return None
+    finally:
+        if cur:
+            cur.close()

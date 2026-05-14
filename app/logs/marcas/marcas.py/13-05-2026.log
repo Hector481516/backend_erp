@@ -1,0 +1,9 @@
+2026-05-13 18:10:05,889 - marcas.py - ERROR - Ocurrió un error: no existe la relación «catalogos_marcas»
+LINE 4:             FROM catalogos_marcas col;
+                         ^
+
+2026-05-13 18:15:16,371 - marcas.py - ERROR - Ocurrió un error: 'MarcaUpdate' object has no attribute 'descripcion'
+2026-05-13 18:16:24,418 - marcas.py - ERROR - Ocurrió un error: 'MarcaUpdate' object has no attribute 'descripcion'
+2026-05-13 18:16:59,258 - marcas.py - ERROR - Ocurrió un error: 'MarcaUpdate' object has no attribute 'descripcion'
+2026-05-13 18:22:18,176 - marcas.py - ERROR - Ocurrió un error: 'MarcaUpdate' object has no attribute 'descripcion'
+2026-05-13 18:24:01,622 - marcas.py - ERROR - Ocurrió un error: 'MarcaUpdate' object has no attribute 'descripcion'

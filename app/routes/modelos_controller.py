@@ -9,7 +9,9 @@ from jsonschema import validate
 from datetime import datetime
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.utils.utils import crear_logg
-from app.esquemas.modelos import consulta_prueba
+from app.esquemas.schemas import ModeloCreate
+from app.databases.database import ejecutar_insert
+from app.esquemas.modelos import get_all_modelos, consulta_clasificaciones, actualiza_modelo
 
 logger = logging.getLogger()
 nivel_debug=os.getenv("LOG_LEVEL")
@@ -45,8 +47,51 @@ app = APIRouter(
 )
 
 
-@app.get('/consulta_prueba')
-def get_prueba_consulta():
+@app.get('/get_all_modelos')
+def get_modelos():
     filtros= {}
-    datos=consulta_prueba(filtros)
+    datos=get_all_modelos(filtros)
+    return {'records': datos}
+@app.get('/get_all_clasificaciones')
+def get_all_clasificaciones():
+    datos=consulta_clasificaciones()
+    return {'records': datos}
+@app.post('/create_modelo')
+def create_modelo(modelo: ModeloCreate):
+    query = """
+        INSERT INTO catalogos_modelo
+        (deleted, deleted_by_cascade, created_at, updated_at, descripcion, modelo, id_estatus_id, id_clasificacion_id, id_marca_id)
+        VALUES(NULL, false, now(), now() ,%s, %s, 1, %s, %s)
+        RETURNING *
+    """
+    res=ejecutar_insert(
+        query,
+        (
+            modelo.nombre,
+            modelo.modelo,
+            modelo.clasificacion,
+            modelo.marca,
+        )
+    )
+    if res:
+        query = """
+            INSERT INTO public.catalogos_modelodetalle
+            (deleted, deleted_by_cascade, created_at, updated_at, clave, id_color_id, id_estatus_id, id_modelo_id)
+            VALUES(NULL, false, now(), now(), %s, %s, 1, %s)
+            RETURNING *
+        """
+        return ejecutar_insert(
+            query,
+            (
+                modelo.clave,
+                modelo.color,
+                res['id']
+            )
+        )
+    else:
+        raise HTTPException(status_code=500, detail="Error al crear el modelo")
+    
+@app.patch('/actualiza_modelo/{id_modelo}')
+def update_modelo(id_modelo: int, modelo: ModeloCreate):
+    datos=actualiza_modelo(id_modelo, modelo)
     return {'records': datos}

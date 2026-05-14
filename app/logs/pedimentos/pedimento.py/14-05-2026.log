@@ -1,0 +1,40 @@
+2026-05-14 13:11:45,646 - pedimento.py - ERROR - Ocurrió un error: no existe la columna mod.clave_producto
+LINE 2: ...'DD-MM-YYYY'),mod.id AS id_modelo,mod.descripcion,mod.clave_...
+                                                             ^
+
+2026-05-14 13:11:45,671 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:01:55,863 - pedimento.py - ERROR - Ocurrió un error: no existe la relación «catalogos_tipoexistencia»
+LINE 5:             INNER JOIN catalogos_tipoexistencia tipo ON tipo...
+                               ^
+
+2026-05-14 14:01:55,871 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:23,410 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:23,410 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:23,410 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:23,410 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:45,832 - pedimento.py - ERROR - Ocurrió un error: no existe la relación «catalogos_tipoexistencia»
+LINE 5:             INNER JOIN catalogos_tipoexistencia tipo ON tipo...
+                               ^
+
+2026-05-14 14:02:45,832 - pedimento.py - ERROR - Ocurrió un error: no existe la relación «catalogos_tipoexistencia»
+LINE 5:             INNER JOIN catalogos_tipoexistencia tipo ON tipo...
+                               ^
+
+2026-05-14 14:02:45,833 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:02:45,833 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:03:35,342 - pedimento.py - ERROR - Ocurrió un error: no existe la columna mod.id_clasificacion_id
+LINE 5: ...NNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_cla...
+                                                             ^
+
+2026-05-14 14:03:35,343 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
+2026-05-14 14:03:35,343 - pedimento.py - ERROR - Ocurrió un error: transacción abortada, las órdenes serán ignoradas hasta el fin de bloque de transacción
+
