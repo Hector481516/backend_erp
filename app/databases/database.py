@@ -87,10 +87,10 @@ def ejecutar_insert(query, values):
     finally:
         if cur:
             cur.close()
-def ejecutar_query(query):
+def ejecutar_query(query, values=None):
     try:
         cur = conn.cursor()
-        cur.execute(query)
+        cur.execute(query, values)
         rows = cur.fetchall()
         columns = [
             desc[0]

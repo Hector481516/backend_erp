@@ -12,7 +12,8 @@ def consulta_colores(filtros):
         query=f'''
              SELECT to_char(col.created_at,'DD-MM-YYYY')creacion,to_char(col.updated_at,'DD-MM-YYYY')actualizacion,id as id_color,descripcion as nombre_color, 
                 (select est.descripcion from  catalogos_estatus est where est.id=col.id_estatus_id) estatus 
-            FROM catalogos_color col;'''
+            FROM catalogos_color col
+            ORDER BY col.descripcion;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)
         listado_json= json.loads(json.dumps(datos))

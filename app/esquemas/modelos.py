@@ -9,12 +9,13 @@ def get_all_modelos(filtros):
     try:
         query=f'''
             SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,
-	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca
+	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca, det.id AS id_modelo_detalle
             FROM  catalogos_modelo mod
             INNER JOIN catalogos_modelodetalle det ON det.id_modelo_id=mod.id
             INNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_clasificacion_id
             INNER JOIN catalogos_color col ON col.id=det.id_color_id
-            INNER JOIN catalogos_marca mar ON mar.id=mod.id_marca_id;'''
+            INNER JOIN catalogos_marca mar ON mar.id=mod.id_marca_id
+            ORDER BY mar.descripcion, mod.descripcion;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)
         listado_json= json.loads(json.dumps(datos))
