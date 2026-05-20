@@ -21,6 +21,22 @@ def consulta_marcas(filtros):
         print(f"An error occurred: {e}")
         crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
         raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
+
+def consulta_marcas_by_descripcion(descripcion):
+    try:
+        query=f'''
+             SELECT to_char(mar.created_at,'DD-MM-YYYY')creacion,to_char(mar.updated_at,'DD-MM-YYYY')actualizacion,id as id_marca,descripcion as nombre_marca, 
+                (select est.descripcion from  catalogos_estatus est where est.id=mar.id_estatus_id) estatus 
+            FROM catalogos_marca mar
+            WHERE mar.descripcion='{descripcion}'
+            ORDER BY mar.descripcion;'''
+        datos=ejecutar_query(query)
+        listado_json= json.loads(json.dumps(datos))
+        return jsonable_encoder(listado_json)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
     
 def actualiza_marcas(id_marca: int, marca: MarcaUpdate):
     try:

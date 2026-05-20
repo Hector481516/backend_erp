@@ -121,3 +121,17 @@ def insertar_productos(productos):
                 crear_logg('error', f"Ocurrió un error: {e}",'productos.py','productos')
                 raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
     return {'message': 'Producto creado exitosamente'}
+
+def get_modelo_detalle_by_clave(clave):
+    try:
+        query=f'''
+            SELECT id as id_modelo_detalle 
+            FROM catalogos_modelodetalle 
+            WHERE clave={clave};'''
+        datos=ejecutar_query(query)
+        listado_json= json.loads(json.dumps(datos))
+        return jsonable_encoder(listado_json)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")

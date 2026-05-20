@@ -8,7 +8,7 @@ from app.databases.database import ejecutar_commit
 def get_all_modelos(filtros):
     try:
         query=f'''
-            SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,
+            SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,det.path_imagen as imagen,
 	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca, det.id AS id_modelo_detalle
             FROM  catalogos_modelo mod
             INNER JOIN catalogos_modelodetalle det ON det.id_modelo_id=mod.id

@@ -23,6 +23,22 @@ def consulta_colores(filtros):
         crear_logg('error', f"Ocurrió un error: {e}",'pedimento.py','pedimentos')
         raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
     
+def consulta_color_by_descripcion(descripcion):
+    try:
+        query=f'''
+             SELECT to_char(col.created_at,'DD-MM-YYYY')creacion,to_char(col.updated_at,'DD-MM-YYYY')actualizacion,id as id_color,descripcion as nombre_color, 
+                (select est.descripcion from  catalogos_estatus est where est.id=col.id_estatus_id) estatus 
+            FROM catalogos_color col
+            WHERE col.descripcion='{descripcion}'
+            ORDER BY col.descripcion;'''
+        datos=ejecutar_query(query)
+        listado_json= json.loads(json.dumps(datos))
+        return jsonable_encoder(listado_json)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
+    
 def actualiza_color(id_color: int, color: ColorUpdate):
     try:
         query = """

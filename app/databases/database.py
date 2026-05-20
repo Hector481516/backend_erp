@@ -67,7 +67,6 @@ def ejecutar_query_diccionario(query):
     except psycopg2.InterfaceError as e:
         print(e)
 def ejecutar_insert(query, values):
-
     try:
         cur = conn.cursor()
         cur.execute(query, values)

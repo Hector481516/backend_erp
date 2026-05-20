@@ -6,6 +6,7 @@ import app.routes.modelos_controller as modelos_controller
 import app.routes.colores_controller as colores_controller
 import app.routes.marcas_controller as marcas_controller
 import app.routes.tallas_controller as tallas_controller
+import app.routes.carga_masiva_controller as carga_masiva_controller
 from fastapi.staticfiles import StaticFiles
 
 import os
@@ -35,6 +36,7 @@ app.include_router(colores_controller.app, prefix='/colores')
 app.include_router(marcas_controller.app, prefix='/marcas')
 app.include_router(productos_controller.app, prefix='/productos')
 app.include_router(tallas_controller.app, prefix='/tallas')
+app.include_router(carga_masiva_controller.app, prefix='/carga-masiva')
 origins = [
     "http://localhost:5173",
 ]
