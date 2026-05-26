@@ -10,11 +10,11 @@ def get_all_modelos(filtros):
         query=f'''
             SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,det.path_imagen as imagen,
 	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca, det.id AS id_modelo_detalle
-            FROM  catalogos_modelo mod
-            INNER JOIN catalogos_modelodetalle det ON det.id_modelo_id=mod.id
-            INNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_clasificacion_id
-            INNER JOIN catalogos_color col ON col.id=det.id_color_id
-            INNER JOIN catalogos_marca mar ON mar.id=mod.id_marca_id
+            FROM  modelo mod
+            INNER JOIN modelo_detalle det ON det.id_modelo_id=mod.id
+            INNER JOIN clasificacion clas ON clas.id=mod.id_clasificacion_id
+            INNER JOIN color col ON col.id=det.id_color_id
+            INNER JOIN marca mar ON mar.id=mod.id_marca_id
             ORDER BY mar.descripcion, mod.descripcion;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)
@@ -29,7 +29,7 @@ def consulta_clasificaciones():
     try:
         query=f'''
             SELECT id as id_clasificacion,descripcion as clasificacion
-            FROM catalogos_clasificacion clas ;'''
+            FROM clasificacion clas ;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)
         listado_json= json.loads(json.dumps(datos))
@@ -42,7 +42,7 @@ def consulta_clasificaciones():
 def actualiza_modelo(id_modelo: int, modelo):
     try:
         query = """
-            UPDATE catalogos_modelo
+            UPDATE modelo
             SET descripcion = %s, modelo = %s, id_clasificacion_id = %s, id_marca_id = %s
             WHERE id = %s
             RETURNING *
@@ -51,7 +51,7 @@ def actualiza_modelo(id_modelo: int, modelo):
         resultado = ejecutar_commit(query, values)
         if resultado:
             query_detalle = """
-                UPDATE catalogos_modelodetalle
+                UPDATE modelo_detalle
                 SET clave = %s, id_color_id = %s
                 WHERE id_modelo_id = %s
                 RETURNING *
@@ -67,7 +67,7 @@ def actualiza_modelo(id_modelo: int, modelo):
 def eliminar_modelo(id_modelo):
     try:
         query = """
-            UPDATE catalogos_modelo
+            UPDATE modelo
             SET id_estatus_id = 3
             WHERE id = %s
             RETURNING *

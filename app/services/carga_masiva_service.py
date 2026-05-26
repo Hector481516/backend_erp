@@ -14,13 +14,12 @@ async def cargar_modelos_excel(file):
     df = pd.read_excel(
         BytesIO(contenido)
     )
-    print(df)
     registros_insertados = 0
     contador=0
     for _, row in df.iterrows():
         contador+=1
         query = """
-        INSERT INTO catalogos_modelo
+        INSERT INTO modelo
         (deleted, deleted_by_cascade, created_at, updated_at, descripcion, modelo, id_estatus_id, id_clasificacion_id, id_marca_id)
         VALUES(NULL, false, now(), now() ,%s, %s, 1, %s, %s)
         RETURNING *
@@ -39,7 +38,7 @@ async def cargar_modelos_excel(file):
         if res:
             color=consulta_color_by_descripcion(row.Color)[0]
             query = """
-                INSERT INTO public.catalogos_modelodetalle
+                INSERT INTO public.modelo_detalle
                 (deleted, deleted_by_cascade, created_at, updated_at, clave, id_color_id, id_estatus_id, id_modelo_id)
                 VALUES(NULL, false, now(), now(), %s, %s, 1, %s)
                 """
@@ -68,16 +67,14 @@ async def cargar_productos_excel(file):
         BytesIO(contenido)
     )
     contador=0
-    print(df)
     for _, row in df.iterrows():
         contador+=1
         query = """
-            INSERT INTO catalogos_producto
+            INSERT INTO producto
                 (deleted, deleted_by_cascade, created_at, updated_at, precio_venta, id_modelo_detalle_id, id_estatus_id, id_talla_id, precio_compra)
                 VALUES(NULL, false, now(), now() ,%s, %s, 1, %s, %s)
         """
         clave=row.Modelo.split(" ")[-1]
-        print(contador, clave)
         talla=consulta_talla_by_descripcion(limpiar_numero(row['Talla']))[0]
         id_modelo_detalle=get_modelo_detalle_by_clave(clave)[0]
         ejecutar_insert(

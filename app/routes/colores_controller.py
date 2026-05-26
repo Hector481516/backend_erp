@@ -66,7 +66,7 @@ def delete_color(id_color):
 @app.post('/create_color')
 def create_color(Color:ColorCreate):
     query = """
-        INSERT INTO catalogos_color (
+        INSERT INTO color (
             descripcion,
             id_estatus_id
         )

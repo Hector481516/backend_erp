@@ -11,8 +11,8 @@ def consulta_colores(filtros):
     try:
         query=f'''
              SELECT to_char(col.created_at,'DD-MM-YYYY')creacion,to_char(col.updated_at,'DD-MM-YYYY')actualizacion,id as id_color,descripcion as nombre_color, 
-                (select est.descripcion from  catalogos_estatus est where est.id=col.id_estatus_id) estatus 
-            FROM catalogos_color col
+                (select est.descripcion from  estatus est where est.id=col.id_estatus_id) estatus 
+            FROM color col
             ORDER BY col.descripcion;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)
@@ -27,8 +27,8 @@ def consulta_color_by_descripcion(descripcion):
     try:
         query=f'''
              SELECT to_char(col.created_at,'DD-MM-YYYY')creacion,to_char(col.updated_at,'DD-MM-YYYY')actualizacion,id as id_color,descripcion as nombre_color, 
-                (select est.descripcion from  catalogos_estatus est where est.id=col.id_estatus_id) estatus 
-            FROM catalogos_color col
+                (select est.descripcion from  estatus est where est.id=col.id_estatus_id) estatus 
+            FROM color col
             WHERE col.descripcion='{descripcion}'
             ORDER BY col.descripcion;'''
         datos=ejecutar_query(query)
@@ -42,7 +42,7 @@ def consulta_color_by_descripcion(descripcion):
 def actualiza_color(id_color: int, color: ColorUpdate):
     try:
         query = """
-            UPDATE catalogos_color
+            UPDATE color
             SET descripcion = %s
             WHERE id = %s
             RETURNING *
@@ -58,14 +58,13 @@ def actualiza_color(id_color: int, color: ColorUpdate):
 def eliminar_color(id_color):
     try:
         query = """
-            UPDATE catalogos_color
+            UPDATE color
             SET id_estatus_id = 3
             WHERE id = %s
             RETURNING *
         """
         values = (id_color)
         resultado = ejecutar_commit(query, values)
-        print(resultado)
         return resultado
     except Exception as e:
         print(f"An error occurred: {e}")

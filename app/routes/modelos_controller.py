@@ -59,7 +59,7 @@ def get_all_clasificaciones():
 @app.post('/create_modelo')
 def create_modelo(modelo: ModeloCreate):
     query = """
-        INSERT INTO catalogos_modelo
+        INSERT INTO modelo
         (deleted, deleted_by_cascade, created_at, updated_at, descripcion, modelo, id_estatus_id, id_clasificacion_id, id_marca_id)
         VALUES(NULL, false, now(), now() ,%s, %s, 1, %s, %s)
         RETURNING *
@@ -75,7 +75,7 @@ def create_modelo(modelo: ModeloCreate):
     )
     if res:
         query = """
-            INSERT INTO public.catalogos_modelodetalle
+            INSERT INTO public.modelo_detalle
             (deleted, deleted_by_cascade, created_at, updated_at, clave, id_color_id, id_estatus_id, id_modelo_id)
             VALUES(NULL, false, now(), now(), %s, %s, 1, %s)
             RETURNING *
@@ -93,7 +93,6 @@ def create_modelo(modelo: ModeloCreate):
     
 @app.patch('/actualiza_modelo/{id_modelo}')
 def update_modelo(id_modelo: int, modelo: ModeloCreate):
-    print(modelo)
     datos=actualiza_modelo(id_modelo, modelo)
     return {'records': datos}
 @app.patch('/borrar_modelo/{id_modelo}')

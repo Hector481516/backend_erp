@@ -10,20 +10,17 @@ from app.databases.database import ejecutar_insert
 def get_tallas_by_modelo_detalle(id_modelo_detalle):
     try:
         query="""
-            SELECT /*(select mod.descripcion from catalogos_modelo mod  
-                inner join catalogos_modelodetalle det on det.id_modelo_id=mod.id 
-                where det.id=prod.id_modelo_detalle_id) as descripcion, */tall.descripcion as talla, count(tall.id) cantidad, tall.id as id_talla
-            FROM  catalogos_producto prod
-            INNER JOIN catalogos_talla tall on tall.id=prod.id_talla_id
-            INNER JOIN catalogos_modelodetalle det on det.id=prod.id_modelo_detalle_id 
+            SELECT tall.descripcion as talla, count(tall.id) cantidad, tall.id as id_talla
+            FROM  producto prod
+            INNER JOIN talla tall on tall.id=prod.id_talla_id
+            INNER JOIN modelo_detalle det on det.id=prod.id_modelo_detalle_id 
             WHERE prod.id_modelo_detalle_id =%s
+            AND prod.id_estatus_id=1
             GROUP BY prod.id_modelo_detalle_id,tall.descripcion, tall.id
             ORDER BY tall.id;"""
         # datos=ejecutar_query_diccionario(query)
-        print(id_modelo_detalle)
         datos=ejecutar_query(query, [id_modelo_detalle])
         listado_json= json.loads(json.dumps(datos))
-        print(jsonable_encoder(listado_json))
         return jsonable_encoder(listado_json)
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -32,21 +29,52 @@ def get_tallas_by_modelo_detalle(id_modelo_detalle):
     
 def get_all_productos(filtros):
     try:
-        query=f'''
-            SELECT to_char(det.created_at,'DD-MM-YYYY')creacion, mod.descripcion, clas.descripcion AS clasificacion,det.clave,prod.precio_venta, prod.precio_compra,
-                col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca,
-                prod.id_modelo_detalle_id as id_modelo_detalle, det.path_imagen as imagen, det.id, count(prod) as cantidad_total
-            FROM catalogos_producto prod  
-            INNER JOIN catalogos_modelodetalle det ON prod.id_modelo_detalle_id=det.id
-            INNER JOIN catalogos_modelo mod ON det.id_modelo_id=mod.id
-            INNER JOIN catalogos_clasificacion clas ON clas.id=mod.id_clasificacion_id
-            INNER JOIN catalogos_color col ON col.id=det.id_color_id
-            INNER JOIN catalogos_marca mar ON mar.id=mod.id_marca_id
-            group by det.id, mod.descripcion, clas.descripcion,det.clave,prod.precio_venta, prod.precio_compra,
+        query='''
+            SELECT to_char(det.created_at,'DD-MM-YYYY')creacion, 
+                mod.descripcion, 
+                clas.descripcion AS clasificacion,
+                det.clave,
+                prod.precio_venta, 
+                prod.precio_compra,
+                col.descripcion as color, 
+                clas.descripcion as clasificacion,
+                mar.descripcion as marca, 
+                col.id AS id_color, 
+                clas.id AS id_clasificacion, 
+                mar.id AS id_marca,
+                prod.id_modelo_detalle_id as id_modelo_detalle, 
+                det.path_imagen as imagen, 
+                det.id, 
+                count(prod.id) as cantidad_total
+            FROM producto prod  
+            INNER JOIN modelo_detalle det ON prod.id_modelo_detalle_id=det.id
+            INNER JOIN modelo mod ON det.id_modelo_id=mod.id
+            INNER JOIN clasificacion clas ON clas.id=mod.id_clasificacion_id
+            INNER JOIN color col ON col.id=det.id_color_id
+            INNER JOIN marca mar ON mar.id=mod.id_marca_id
+            WHERE 1=1
+            '''
+        where = []
+        params = {}
+        if filtros.estatus is not None:
+            where.append("prod.id_estatus_id = %(estatus)s")
+            params["estatus"] = filtros.estatus
+        if where:
+            query += " AND " + " AND ".join(where)
+        query += '''
+            GROUP by det.id, mod.descripcion, clas.descripcion,det.clave,prod.precio_venta, prod.precio_compra,
             col.descripcion, clas.descripcion, mar.descripcion, col.id , clas.id, mar.id,
-            prod.id_modelo_detalle_id, det.path_imagen, det.id;'''
+            prod.id_modelo_detalle_id, det.path_imagen, det.id
+            limit 10;'''
         # datos=ejecutar_query_diccionario(query)
-        datos=ejecutar_query(query)
+        datos=ejecutar_query(query,params, True)
+        productos = {}
+        for row in datos:
+            id_modelo_detalle_id = row['id_modelo_detalle']
+            tallas=get_tallas_by_modelo_detalle(id_modelo_detalle_id)
+            if id_modelo_detalle_id not in productos:
+                row["tallas"] = tallas
+            row['imagen']=os.getenv("VITE_PATH_IMAGENES_CALZADO")+row['imagen']
         listado_json= json.loads(json.dumps(datos))
         return jsonable_encoder(listado_json)
     except Exception as e:
@@ -58,7 +86,7 @@ def get_all_productos(filtros):
 def actualiza_producto(id_producto: int, producto):
     try:
         query = """
-            UPDATE catalogos_modelo
+            UPDATE modelo
             SET descripcion = %s, modelo = %s, id_clasificacion_id = %s, id_marca_id = %s
             WHERE id = %s
             RETURNING *
@@ -67,7 +95,7 @@ def actualiza_producto(id_producto: int, producto):
         resultado = ejecutar_commit(query, values)
         if resultado:
             query_detalle = """
-                UPDATE catalogos_modelodetalle
+                UPDATE modelo_detalle
                 SET clave = %s, id_color_id = %s
                 WHERE id_modelo_id = %s
                 RETURNING *
@@ -83,7 +111,7 @@ def actualiza_producto(id_producto: int, producto):
 def eliminar_producto(id_producto):
     try:
         query = """
-            UPDATE catalogos_modelo
+            UPDATE modelo
             SET id_estatus_id = 3
             WHERE id = %s
             RETURNING *
@@ -99,7 +127,7 @@ def insertar_productos(productos):
     for producto in productos:
         for _ in range(producto.cantidad):
             query = """
-                INSERT INTO catalogos_producto
+                INSERT INTO producto
                 (deleted, deleted_by_cascade, created_at, updated_at, precio_venta, id_modelo_detalle_id, id_estatus_id, id_talla_id, precio_compra)
                 VALUES(NULL, false, now(), now() ,%s, %s, 1, %s, %s)
                 RETURNING *
@@ -126,11 +154,37 @@ def get_modelo_detalle_by_clave(clave):
     try:
         query=f'''
             SELECT id as id_modelo_detalle 
-            FROM catalogos_modelodetalle 
+            FROM modelo_detalle 
             WHERE clave={clave};'''
         datos=ejecutar_query(query)
         listado_json= json.loads(json.dumps(datos))
         return jsonable_encoder(listado_json)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
+        raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
+def actualiza_marcar_venta(id_modelo_detalle, producto):
+    print(producto)
+    try:
+        query = """
+            WITH registro AS (
+                SELECT id
+                FROM producto
+                WHERE id_modelo_detalle_id= %s
+                AND id_talla_id=%s
+                ORDER BY created_at asc
+                LIMIT 1
+            )
+            UPDATE producto
+            SET precio_venta = %s, id_estatus_id=5
+            WHERE id IN (
+                SELECT id FROM registro
+            );
+        """
+        values = (id_modelo_detalle,producto.id_talla, producto.precio_venta)
+        print(values)
+        resultado = ejecutar_commit(query, values)
+        return resultado
     except Exception as e:
         print(f"An error occurred: {e}")
         crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')

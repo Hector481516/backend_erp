@@ -10,8 +10,8 @@ from jsonschema import validate
 from datetime import datetime
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.utils.utils import crear_logg
-from app.esquemas.schemas import ModeloCreate, ProductoCreate
-from app.esquemas.productos import get_all_productos, actualiza_producto, eliminar_producto, get_tallas_by_modelo_detalle, insertar_productos
+from app.esquemas.schemas import ModeloCreate, ProductoCreate, CreateVenta, ProductoFiltros
+from app.esquemas.productos import get_all_productos, actualiza_producto, eliminar_producto, get_tallas_by_modelo_detalle, insertar_productos, actualiza_marcar_venta
 
 logger = logging.getLogger()
 nivel_debug=os.getenv("LOG_LEVEL")
@@ -48,26 +48,38 @@ app = APIRouter(
 
 
 @app.get('/get_all_productos')
-def get_productos():
-    filtros= {}
-    datos=get_all_productos(filtros)
-    productos = {}
-    for row in datos:
-        id_modelo_detalle_id = row['id_modelo_detalle']
-        tallas=get_tallas_by_modelo_detalle(id_modelo_detalle_id)
-        if id_modelo_detalle_id not in productos:
-            row["tallas"] = tallas
-    return {'records': datos}
+def get_productos( filtros: ProductoFiltros=Depends()):
+    print(filtros)
+    return {'records': get_all_productos(filtros)}
+
+# @app.get('/get_all_productos')
+# def get_productos_catalogos(filtros):
+#     filtros= {}
+#     datos=get_all_productos(filtros)
+#     productos = {}
+#     for row in datos:
+#         id_modelo_detalle_id = row['id_modelo_detalle']
+#         tallas=get_tallas_by_modelo_detalle(id_modelo_detalle_id)
+#         if id_modelo_detalle_id not in productos:
+#             row["tallas"] = tallas
+#     return {'records': datos}
+
 @app.post('/create_producto')
 def create_producto( productos: List[ProductoCreate]):
     res= insertar_productos(productos)
     return {'message': 'Productos creados exitosamente'}
+
 @app.patch('/actualiza_producto/{id_producto}')
 def update_producto(id_producto: int, producto: ModeloCreate):
-    print(producto)
     datos=actualiza_producto(id_producto, producto)
     return {'records': datos}
+
 @app.patch('/borrar_producto/{id_producto}')
 def delete_producto(id_producto: int):
     datos=eliminar_producto(id_producto)
+    return {'records': datos}
+
+@app.patch('/marcar_venta/{id_modelo_detalle}')
+def marcar_venta(id_modelo_detalle: int, producto: CreateVenta):
+    datos=actualiza_marcar_venta(id_modelo_detalle, producto)
     return {'records': datos}

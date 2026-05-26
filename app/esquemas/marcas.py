@@ -11,8 +11,8 @@ def consulta_marcas(filtros):
     try:
         query=f'''
              SELECT to_char(mar.created_at,'DD-MM-YYYY')creacion,to_char(mar.updated_at,'DD-MM-YYYY')actualizacion,id as id_marca,descripcion as nombre_marca, 
-                (select est.descripcion from  catalogos_estatus est where est.id=mar.id_estatus_id) estatus 
-            FROM catalogos_marca mar
+                (select est.descripcion from  estatus est where est.id=mar.id_estatus_id) estatus 
+            FROM marca mar
             ORDER BY mar.descripcion;'''
         datos=ejecutar_query(query)
         listado_json= json.loads(json.dumps(datos))
@@ -26,8 +26,8 @@ def consulta_marcas_by_descripcion(descripcion):
     try:
         query=f'''
              SELECT to_char(mar.created_at,'DD-MM-YYYY')creacion,to_char(mar.updated_at,'DD-MM-YYYY')actualizacion,id as id_marca,descripcion as nombre_marca, 
-                (select est.descripcion from  catalogos_estatus est where est.id=mar.id_estatus_id) estatus 
-            FROM catalogos_marca mar
+                (select est.descripcion from  estatus est where est.id=mar.id_estatus_id) estatus 
+            FROM marca mar
             WHERE mar.descripcion='{descripcion}'
             ORDER BY mar.descripcion;'''
         datos=ejecutar_query(query)
@@ -41,7 +41,7 @@ def consulta_marcas_by_descripcion(descripcion):
 def actualiza_marcas(id_marca: int, marca: MarcaUpdate):
     try:
         query = """
-            UPDATE catalogos_marca
+            UPDATE marca
             SET descripcion = %s
             WHERE id = %s
             RETURNING *
@@ -57,7 +57,7 @@ def actualiza_marcas(id_marca: int, marca: MarcaUpdate):
 def eliminar_marca(id_marca):
     try:
         query = """
-            UPDATE catalogos_marca
+            UPDATE marca
             SET id_estatus_id = 3
             WHERE id = %s
             RETURNING *

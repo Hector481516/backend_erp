@@ -86,9 +86,11 @@ def ejecutar_insert(query, values):
     finally:
         if cur:
             cur.close()
-def ejecutar_query(query, values=None):
+def ejecutar_query(query, values=None, debug=False):
     try:
         cur = conn.cursor()
+        if debug:
+            print(cur.mogrify(query, values).decode("utf-8"))
         cur.execute(query, values)
         rows = cur.fetchall()
         columns = [

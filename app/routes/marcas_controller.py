@@ -67,7 +67,7 @@ def delete_marca(id_marca):
 @app.post('/create_marca')
 def create_marca(marca: MarcaCreate):
     query = """
-        INSERT INTO catalogos_marca (
+        INSERT INTO marca (
             descripcion,
             id_estatus_id
         )

@@ -11,8 +11,8 @@ def consulta_clasificacion_by_descripcion(descripcion):
     try:
         query=f'''
              SELECT to_char(clas.created_at,'DD-MM-YYYY')creacion,to_char(clas.updated_at,'DD-MM-YYYY')actualizacion,id as id_clasificacion,descripcion as nombre_clasificacion, 
-                (select est.descripcion from  catalogos_estatus est where est.id=clas.id_estatus_id) estatus 
-            FROM catalogos_clasificacion clas
+                (select est.descripcion from  estatus est where est.id=clas.id_estatus_id) estatus 
+            FROM clasificacion clas
             WHERE clas.descripcion='{descripcion}'
             ORDER BY clas.descripcion;'''
         datos=ejecutar_query(query)

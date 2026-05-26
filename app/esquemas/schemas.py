@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List, Optional
 
 
 class ColorCreate(BaseModel):
@@ -41,3 +42,15 @@ class ProductoCreate(BaseModel):
     cantidad: int
     precio_compra: float
     precio_venta: float
+
+class CreateVenta(BaseModel):
+
+    id_talla: int
+    precio_venta: int
+
+class ProductoFiltros:
+    def __init__(
+        self,
+        estatus: Optional[int] = None
+    ):
+        self.estatus = estatus

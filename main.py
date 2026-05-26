@@ -1,19 +1,17 @@
-from app.routes import productos_controller
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
+from fastapi.staticfiles import StaticFiles
+
+from app.routes import productos_controller
 import app.routes.modelos_controller as modelos_controller
 import app.routes.colores_controller as colores_controller
 import app.routes.marcas_controller as marcas_controller
 import app.routes.tallas_controller as tallas_controller
 import app.routes.carga_masiva_controller as carga_masiva_controller
-from fastapi.staticfiles import StaticFiles
+import app.routes.catalogo_controller as catalogo_controller
 
 import os
 
-ruta = "C:/calzado"
-
-print(os.listdir(ruta))
 
 app = FastAPI()
 app.mount(
@@ -37,6 +35,7 @@ app.include_router(marcas_controller.app, prefix='/marcas')
 app.include_router(productos_controller.app, prefix='/productos')
 app.include_router(tallas_controller.app, prefix='/tallas')
 app.include_router(carga_masiva_controller.app, prefix='/carga-masiva')
+app.include_router(catalogo_controller.app, prefix='/catalogo')
 origins = [
     "http://localhost:5173",
 ]

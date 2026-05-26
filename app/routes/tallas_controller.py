@@ -12,7 +12,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.utils.utils import crear_logg
 from app.esquemas.colores import actualiza_color, consulta_colores, eliminar_color
 from app.esquemas.schemas import TallaCreate, TallaUpdate
-from app.esquemas.tallas import consulta_tallas
+from app.esquemas.tallas import consulta_tallas, consulta_tallas_by_modelo
 
 logger = logging.getLogger()
 nivel_debug=os.getenv("LOG_LEVEL")
@@ -52,4 +52,10 @@ app = APIRouter(
 def get_all_tallas():
     filtros= {}
     datos=consulta_tallas(filtros)
+    return {'records': datos}
+
+@app.get('/get_tallas_disponibles_by_modelo/{id_modelo_detalle}')
+def get_tallas_disponibles_by_modelo(id_modelo_detalle: int):
+    filtros= {'id_modelo_detalle': id_modelo_detalle}
+    datos=consulta_tallas_by_modelo(filtros)
     return {'records': datos}
