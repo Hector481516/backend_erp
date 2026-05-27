@@ -64,7 +64,6 @@ def eliminar_marca(id_marca):
         """
         values = (id_marca)
         resultado = ejecutar_commit(query, values)
-        print(resultado)
         return resultado
     except Exception as e:
         print(f"An error occurred: {e}")

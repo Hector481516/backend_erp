@@ -64,10 +64,8 @@ def get_all_productos(filtros):
         query += '''
             GROUP by det.id, mod.descripcion, clas.descripcion,det.clave,prod.precio_venta, prod.precio_compra,
             col.descripcion, clas.descripcion, mar.descripcion, col.id , clas.id, mar.id,
-            prod.id_modelo_detalle_id, det.path_imagen, det.id
-            limit 10;'''
-        # datos=ejecutar_query_diccionario(query)
-        datos=ejecutar_query(query,params, True)
+            prod.id_modelo_detalle_id, det.path_imagen, det.id;'''
+        datos=ejecutar_query(query,params)
         productos = {}
         for row in datos:
             id_modelo_detalle_id = row['id_modelo_detalle']
@@ -164,7 +162,6 @@ def get_modelo_detalle_by_clave(clave):
         crear_logg('error', f"Ocurrió un error: {e}",'marcas.py','marcas')
         raise HTTPException(status_code=500, detail=f"Ocurrió un error: {e}")
 def actualiza_marcar_venta(id_modelo_detalle, producto):
-    print(producto)
     try:
         query = """
             WITH registro AS (

@@ -7,14 +7,22 @@ from fastapi import HTTPException
 from app.databases.database import ejecutar_commit
 def get_all_modelos(filtros):
     try:
-        query=f'''
+        query='''
             SELECT to_char(mod.created_at,'DD-MM-YYYY')creacion,mod.id AS id_modelo,mod.descripcion,mod.modelo AS numero_modelo, clas.descripcion AS clasificacion,det.clave,det.path_imagen as imagen,
 	            col.descripcion as color, clas.descripcion as clasificacion, mar.descripcion as marca, col.id AS id_color, CLAS.id AS id_clasificacion, mar.id AS id_marca, det.id AS id_modelo_detalle
             FROM  modelo mod
             INNER JOIN modelo_detalle det ON det.id_modelo_id=mod.id
             INNER JOIN clasificacion clas ON clas.id=mod.id_clasificacion_id
             INNER JOIN color col ON col.id=det.id_color_id
-            INNER JOIN marca mar ON mar.id=mod.id_marca_id
+            INNER JOIN marca mar ON mar.id=mod.id_marca_id'''
+        where = []
+        params = {}
+        if filtros.estatus is not None:
+            where.append("mod.id_estatus_id = %(estatus)s")
+            params["estatus"] = filtros.estatus
+        if where:
+            query += " AND " + " AND ".join(where)
+        query+='''
             ORDER BY mar.descripcion, mod.descripcion;'''
         # datos=ejecutar_query_diccionario(query)
         datos=ejecutar_query(query)

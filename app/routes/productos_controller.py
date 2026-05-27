@@ -49,7 +49,6 @@ app = APIRouter(
 
 @app.get('/get_all_productos')
 def get_productos( filtros: ProductoFiltros=Depends()):
-    print(filtros)
     return {'records': get_all_productos(filtros)}
 
 # @app.get('/get_all_productos')

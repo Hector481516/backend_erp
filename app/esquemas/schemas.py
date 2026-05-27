@@ -54,3 +54,10 @@ class ProductoFiltros:
         estatus: Optional[int] = None
     ):
         self.estatus = estatus
+        
+class ModeloFiltros:
+    def __init__(
+        self,
+        estatus: Optional[int] = None
+    ):
+        self.estatus = estatus

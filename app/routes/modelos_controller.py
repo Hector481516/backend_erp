@@ -9,7 +9,7 @@ from jsonschema import validate
 from datetime import datetime
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.utils.utils import crear_logg
-from app.esquemas.schemas import ModeloCreate
+from app.esquemas.schemas import ModeloCreate, ModeloFiltros
 from app.databases.database import ejecutar_insert
 from app.esquemas.modelos import get_all_modelos, consulta_clasificaciones, actualiza_modelo, eliminar_modelo
 
@@ -48,8 +48,7 @@ app = APIRouter(
 
 
 @app.get('/get_all_modelos')
-def get_modelos():
-    filtros= {}
+def get_modelos(filtros: ModeloFiltros=Depends()):
     datos=get_all_modelos(filtros)
     return {'records': datos}
 @app.get('/get_all_clasificaciones')
